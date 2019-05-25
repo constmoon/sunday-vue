@@ -6,17 +6,28 @@
         <v-btn fab dark color="gray">
           <v-icon dark @click="$router.push('/create')">+</v-icon>
         </v-btn>
+        <v-btn fab dark color="pink">
+          <v-icon dark @click="$router.push('/signup')">++</v-icon>
+        </v-btn>
+        <v-btn fab dark color="blue">
+          <v-icon dark @click="$router.push('/login')">~</v-icon>
+        </v-btn>
       </v-flex>
+      <PostList></PostList>
     </v-layout>
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import PostList from './PostList'
 export default {
   computed: {
     ...mapGetters(["uid", "name"])
   },
+  components: {
+      PostList
+  }
 };
 </script>
 <style scoped>
