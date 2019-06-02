@@ -3,7 +3,8 @@
     <v-layout row justify-space-between>
       <v-flex xs2>
         <v-card flat>
-          <v-card-text class="text-xs-left">{{ name }}</v-card-text>
+          <v-card-text class="text-xs-left">{{ username }}</v-card-text>
+          <v-card-text class="text-xs-left">{{ uid }}</v-card-text>
         </v-card>
       </v-flex>
       <v-flex xs2>
@@ -25,17 +26,37 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 import { mapGetters, mapActions } from "vuex";
 import PostList from "./PostList";
 export default {
+  created() {
+    // 로그인 이후 state에 상태 저장
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        const isAnonymous = user.isAnonymous;
+        const username = isAnonymous ? "익명" : user.displayName;
+        const uid = user.uid;
+        this.updateUid(uid);
+        this.updateUserName(username);
+        // ...
+      } else {
+        // User is signed out.
+        // ...
+      }
+    });
+  },
   computed: {
-    ...mapGetters([ 'uid', 'name' ])
+    ...mapGetters(["uid", "username"])
   },
   components: {
     PostList
   },
   methods: {
-    
+    ...mapActions(["updateUid", "updateUserName"])
   }
 };
 </script>

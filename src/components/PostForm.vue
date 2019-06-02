@@ -47,6 +47,7 @@
 
 <script>
 import { db } from "../config/db";
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -61,14 +62,16 @@ export default {
       message: ""
     };
   },
+  computed: {
+    ...mapGetters([ 'uid' ])
+  },
   methods: {
     addPost() {
       if (this.title === "") {
         this.message = "Title is required";
         this.dialog = true;
       }
-      db.collection("posts")
-        .add({
+      db.collection('users').doc(this.uid).collection('posts').add({
           title: this.post.title,
           content: this.post.content,
           tag: this.post.tags,

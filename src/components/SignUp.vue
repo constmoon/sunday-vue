@@ -4,7 +4,7 @@
     <v-spacer></v-spacer>
     <v-layout row wrap align-center justify-center>
       <v-flex xs7 offset-xs1>
-        <v-text-field label="Name" required v-model="name"></v-text-field>
+        <v-text-field label="Username" required v-model="username"></v-text-field>
       </v-flex>
       <v-flex xs7 offset-xs1>
         <v-text-field label="Password*" type="password" required v-model="password"></v-text-field>
@@ -21,29 +21,44 @@
 
 <script>
 import firebase from "firebase/app";
-import 'firebase/auth';
-import 'firebase/firestore';
+import "firebase/auth";
+import "firebase/firestore";
+import { mapActions } from "vuex";
+import { db } from "../config/db";
 export default {
   data() {
     return {
-      name: "",
+      username: "",
       password: "",
       email: ""
     };
   },
+  created() {},
   methods: {
+    ...mapActions([ 'updateUid', 'updateUserName' ]),
     SignUp() {
-        console.log(`${this.email} ${this.name}`)
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(function(user) {
-            user.updateProfile( { 
-                displayName: this.name 
+        .then(() => {
+          firebase
+            .auth()
+            .currentUser.updateProfile({
+              displayName: this.username
             })
-        })
-        .catch(function(error) {
-          alert(error);
+            .then(() => {
+              db.collection("users")
+                .add({
+                  username: this.username,
+                  email: this.email
+                })
+                .then(() => {
+                  /* eslint-disable no-console */
+                  console.log("user database successfully inserted");
+                  this.$router.push("/");
+                });
+            })
+            .catch(error => console.error("Error writing document: ", error));
         });
     }
   }
