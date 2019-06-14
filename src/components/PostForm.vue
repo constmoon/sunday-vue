@@ -13,6 +13,7 @@
             <v-flex xs12>
               <v-text-field label="title" v-model="post.title" required></v-text-field>
               <v-textarea label="content" v-model="post.content"></v-textarea>
+              <v-textarea label="link" v-model="post.link"></v-textarea>
             </v-flex>
             <v-flex xs12>
               <v-text-field label="tag" v-model="tag" @keyup.enter.native="makeTagChip"></v-text-field>
@@ -55,6 +56,7 @@ export default {
         title: "",
         content: "",
         tags: [], // db에 저장할 태그 배열
+        link: "",
         date: new Date().toISOString().substr(0, 10)
       },
       tag: "", // 현재 입력하는 태그

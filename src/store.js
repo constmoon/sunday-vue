@@ -57,6 +57,7 @@ export default new Vuex.Store({
                                 id: doc.id, 
                                 title: doc.data().title,
                                 content: doc.data().content,
+                                link: doc.data().link,
                                 tags: doc.data().tag,
                                 date: doc.data().date
                             })

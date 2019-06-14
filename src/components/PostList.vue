@@ -1,49 +1,39 @@
 <template>
-  <v-flex xs12>
-    <v-card flat>
-      <v-card-title>
-        <span class="display-1 font-weight-bold">Archive</span>
-        <v-spacer></v-spacer>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="posts"
-        :pagination.sync="pagination"
-        :search="search"
-        flat
-        disable-initial-sort
-        class="elevation-1"
-      >
-        <template v-slot:items="props">
-          <tr>
-            <td class="text-xs-left">{{ props.item.date }}</td>
-            <td
-              class="post__title text-xs-left"
-              @click.prevent="$router.push(`/post/${props.item.id}`)"
-            >{{ props.item.title }}</td>
-            <td class="text-xs-left">{{ props.item.content | truncate(100, '...') }}</td>
-            <td class="text-xs-left">
-              <v-chip 
-                class="post__tag" 
-                gray 
-                v-for="(tag, index) in props.item.tags" 
-                :key="index"
-                @click.prevent="$router.push(`/tag/${tag}`)">{{tag}}
-              </v-chip>
-            </td>
-          </tr>
-        </template>
-        <template v-slot:no-results>
-          <v-alert
-            :value="true"
-            color="error"
-            icon="warning"
-          >Your search for "{{ search }}" found no results.</v-alert>
-        </template>
-      </v-data-table>
-    </v-card>
-  </v-flex>
+  <v-layout row wrap align-center>
+    <v-flex xs8 offset-md2>
+      <div v-for="post in posts" :key="post.id">
+        <v-card>
+          <v-container fluid>
+            <v-layout>
+              <v-flex xs12 align-end d-flex>
+                <span
+                  class="post__title text-xs-left"
+                  @click.prevent="$router.push(`/post/${post.id}`)"
+                >{{ post.title }}</span>
+              </v-flex>
+            </v-layout>
+          </v-container>
+
+          <v-card-text class="text-xs-left pt-0">{{ post.content | truncate(100, '...') }}</v-card-text>
+          <v-card-actions>
+            <v-chip
+              small
+              color="secondary"
+              class="post__tag"
+              gray
+              v-for="(tag, index) in post.tags"
+              :key="index"
+              @click.prevent="$router.push(`/tag/${tag}`)"
+            >{{tag}}</v-chip>
+            <v-spacer></v-spacer>
+            <v-btn icon right class="post__originlink">
+              <v-icon small>link</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -73,24 +63,16 @@ export default {
   },
   data() {
     return {
-      pagination: {
-        rowsPerPage: 10,
-        page: 1
-      },
-      search: "",
-      headers: [
-        { text: "Date", value: "date", width: "14%" },
-        { text: "Title", value: "title", width: "20%" },
-        { text: "Content", value: "content", sortable: false, width: "41%" },
-        { text: "Tags", value: "tags", width: "25%" }
-      ]
+      
     };
   }
 };
 </script>
 
 <style scoped>
-.post__title{
+.post__title {
   cursor: pointer;
+  font-size: 2rem;
+  font-weight: 700;
 }
 </style>
