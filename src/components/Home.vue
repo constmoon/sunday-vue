@@ -7,17 +7,12 @@
           <v-card-text class="text-xs-left">{{ uid }}</v-card-text>
         </v-card>
       </v-flex>
-      <v-flex xs2>
+      <v-flex xs3>
         <v-card flat>
-          <v-btn depressed fab dark color="gray">
-            <v-icon dark @click="$router.push('/create')">+</v-icon>
-          </v-btn>
-          <v-btn depressed fab dark color="pink">
-            <v-icon dark @click="$router.push('/signup')">++</v-icon>
-          </v-btn>
-          <v-btn depressed fab dark color="blue">
-            <v-icon dark @click="$router.push('/login')">~</v-icon>
-          </v-btn>
+          <v-btn dark depressed color="teal" @click="$router.push('/create')">Create</v-btn>
+          <v-btn outline color="gray" v-if="!authenticated" @click="$router.push('/signup')">Signup</v-btn>
+          <v-btn outline color="gray" v-if="authenticated" @click="LogOut()">Logout</v-btn>
+          <v-btn outline color="gray" v-else @click="$router.push('/login')">Login</v-btn>
         </v-card>
       </v-flex>
     </v-layout>
@@ -26,23 +21,26 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import { mapGetters, mapActions } from "vuex";
 import PostList from "./PostList";
+const fb = require('../config/db')
 export default {
+  data() {
+    return {
+      authenticated: false
+    }
+  },
   created() {
     // 로그인 이후 state에 상태 저장
-    firebase.auth().onAuthStateChanged(user => {
+    fb.auth.onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
+        this.authenticated = true
         const isAnonymous = user.isAnonymous;
         const username = isAnonymous ? "익명" : user.displayName;
         const uid = user.uid;
         this.updateUid(uid);
         this.updateUserName(username);
-        // ...
       } else {
         // User is signed out.
         // ...
@@ -56,8 +54,16 @@ export default {
     PostList
   },
   methods: {
-    ...mapActions(["updateUid", "updateUserName"])
-  }
+    ...mapActions(["updateUid", "updateUserName"]),
+    LogOut() {
+      fb.auth.signOut().then(() => {
+        this.$router.replace("/");
+        // 버그... router 쓰지 말고 해야
+        // replace는 히스토리 스택에 안 쌓임
+        // push 는 쌓임
+      })
+    }
+  },
 };
 </script>
 <style scoped>

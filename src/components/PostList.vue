@@ -9,6 +9,7 @@
       <v-data-table
         :headers="headers"
         :items="posts"
+        :pagination.sync="pagination"
         :search="search"
         flat
         disable-initial-sort
@@ -18,12 +19,18 @@
           <tr>
             <td class="text-xs-left">{{ props.item.date }}</td>
             <td
-              class="text-xs-left"
+              class="post__title text-xs-left"
               @click.prevent="$router.push(`/post/${props.item.id}`)"
             >{{ props.item.title }}</td>
             <td class="text-xs-left">{{ props.item.content | truncate(100, '...') }}</td>
             <td class="text-xs-left">
-              <v-chip gray v-for="(tag, index) in props.item.tags" :key="index">{{tag}}</v-chip>
+              <v-chip 
+                class="post__tag" 
+                gray 
+                v-for="(tag, index) in props.item.tags" 
+                :key="index"
+                @click.prevent="$router.push(`/tag/${tag}`)">{{tag}}
+              </v-chip>
             </td>
           </tr>
         </template>
@@ -66,6 +73,10 @@ export default {
   },
   data() {
     return {
+      pagination: {
+        rowsPerPage: 10,
+        page: 1
+      },
       search: "",
       headers: [
         { text: "Date", value: "date", width: "14%" },
@@ -79,8 +90,7 @@ export default {
 </script>
 
 <style scoped>
-.post__title {
-  font-weight: 700;
+.post__title{
   cursor: pointer;
 }
 </style>

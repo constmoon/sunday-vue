@@ -17,10 +17,8 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import { mapGetters } from 'vuex';
+const fb = require('../config/db')
 export default {
   data() {
     return {
@@ -33,15 +31,13 @@ export default {
   },
   methods: {
     Login() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
+      fb.auth.signInWithEmailAndPassword(this.email, this.password)
         .then(user => {
           /* eslint-disable no-console */
           console.log(user);
           this.$router.push("/");
         })
-        .catch(error => console.error("Error writing document: ", error));
+        .catch(error => alert(error.message));
     }
   }
 };

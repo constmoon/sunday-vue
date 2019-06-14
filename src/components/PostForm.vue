@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { db } from "../config/db";
 import { mapGetters } from 'vuex';
+const fb = require('../config/db')
 export default {
   data() {
     return {
@@ -71,7 +71,7 @@ export default {
         this.message = "Title is required";
         this.dialog = true;
       }
-      db.collection('users').doc(this.uid).collection('posts').add({
+      fb.db.collection('posts').doc(this.uid).collection('posts').add({
           title: this.post.title,
           content: this.post.content,
           tag: this.post.tags,

@@ -20,11 +20,8 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import { mapActions } from "vuex";
-import { db } from "../config/db";
+const fb = require('../config/db')
 export default {
   data() {
     return {
@@ -37,17 +34,13 @@ export default {
   methods: {
     ...mapActions([ 'updateUid', 'updateUserName' ]),
     SignUp() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
+      fb.auth.createUserWithEmailAndPassword(this.email, this.password)
         .then(() => {
-          firebase
-            .auth()
-            .currentUser.updateProfile({
+          fb.currentUser.updateProfile({
               displayName: this.username
             })
             .then(() => {
-              db.collection("users")
+              fb.db.collection("users")
                 .add({
                   username: this.username,
                   email: this.email

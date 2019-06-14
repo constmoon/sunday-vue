@@ -51,7 +51,7 @@ export default new Vuex.Store({
             fb.auth.onAuthStateChanged(function(user) {
                 if (user) {
                     // console.log(fb.auth.currentUser);    // currentUser object 리턴
-                    fb.db.collection('users').doc(user.uid).collection('posts').orderBy('date','desc').onSnapshot((snapshot) => {
+                    fb.db.collection('posts').doc(user.uid).collection('posts').orderBy('date','desc').onSnapshot((snapshot) => {
                         snapshot.forEach((doc) => {
                             posts.push({ 
                                 id: doc.id, 
