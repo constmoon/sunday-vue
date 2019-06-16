@@ -19,7 +19,7 @@ export default new Vuex.Store({
             if(state.posts.length){
                 return state.posts
             }
-        }
+        },
     },
     // mutations: state의 상태관리에 초점을 둔다.
     // mutation에 비동기 처리 로직들이 포함되면 같은 값에 대해 여러 개의 컴포넌트에서 변경을 요청했을 때 변경순서 파악이 어려워지므로
@@ -47,7 +47,7 @@ export default new Vuex.Store({
         fetchPosts({ commit }){
             let posts = []
             
-            // 로그인된 유저의 글을 받아옴
+            // 로그인된 유저의 글 목록을 받아옴
             fb.auth.onAuthStateChanged(function(user) {
                 if (user) {
                     // console.log(fb.auth.currentUser);    // currentUser object 리턴

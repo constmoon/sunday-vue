@@ -14,8 +14,9 @@
             </v-layout>
           </v-container>
 
-          <v-card-text class="text-xs-left pt-0">{{ post.content | truncate(100, '...') }}</v-card-text>
+          <v-card-text class="text-xs-left px-4 pt-0">{{ post.content | truncate(300, '...') }}</v-card-text>
           <v-card-actions>
+            <v-layout class="px-4 py-4">
             <v-chip
               small
               color="secondary"
@@ -26,9 +27,13 @@
               @click.prevent="$router.push(`/tag/${tag}`)"
             >{{tag}}</v-chip>
             <v-spacer></v-spacer>
-            <v-btn icon right class="post__originlink">
-              <v-icon small>link</v-icon>
+            <v-btn icon right class="post__originlink" v-if="post.content!=''">
+              <v-icon>link</v-icon>
             </v-btn>
+            <v-btn icon right @click="deletePost(uid, post.id)">
+              <v-icon>delete</v-icon>
+            </v-btn>
+            </v-layout>
           </v-card-actions>
         </v-card>
       </div>
@@ -38,6 +43,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+const fb = require('../config/db')
 export default {
   name: "PostList",
   created() {
@@ -45,7 +51,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      posts: "posts"
+      posts: "posts",
+      uid: "uid"
     })
   },
   methods: {
@@ -54,6 +61,13 @@ export default {
     }),
     getPosts() {
       this.fetchPosts();
+    },
+    deletePost(uid, key) {
+      if(key){
+        fb.db.collection('posts').doc(uid).collection('posts').doc(key).delete().then(function() {
+          alert("Successfully deleted")
+        })
+      }
     }
   },
   filters: {
@@ -63,13 +77,15 @@ export default {
   },
   data() {
     return {
-      
     };
   }
 };
 </script>
 
 <style scoped>
+.v-card{
+  margin-bottom: 2.5rem;
+}
 .post__title {
   cursor: pointer;
   font-size: 2rem;

@@ -1,12 +1,14 @@
 <template>
-  <v-layout row wrap align-center class="post__wrapper">
+  <v-container fluid grid-list-sm d-flex>
+    <Navigation></Navigation>
+    <v-layout row wrap align-center class="post__wrapper">
     <v-flex xs8 offset-md2>
       <v-card>
         <v-container fluid>
           <v-form>
-            <v-text-field single-line full-width required label="title" v-model="post.title"></v-text-field>
-            <v-textarea full-width label="content" v-model="post.content"></v-textarea>
-            <v-text-field single-line full-width label="link" v-model="post.link"></v-text-field>
+            <v-text-field single-line full-width required label="title" v-model="post[0].title"></v-text-field>
+            <v-textarea full-width label="content" v-model="post[0].content"></v-textarea>
+            <v-text-field single-line full-width label="link" v-model="post[0].link"></v-text-field>
             <v-text-field
               single-line
               full-width
@@ -17,7 +19,7 @@
             <v-layout align-start justify-start pl-3>
               <v-chip
                 dark
-                v-for="(item, index) in post.tags"
+                v-for="(item, index) in post[0].tags"
                 :key="index"
                 close
                 @input="removeTag(index)"
@@ -43,14 +45,21 @@
       </v-dialog>
     </v-flex>
   </v-layout>
+  </v-container>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import Navigation from "./Navigation";
+import { mapGetters } from 'vuex';
 const fb = require("../config/db");
 export default {
+  name: "EditPost",
+  components: {
+    Navigation,
+  },
   data() {
     return {
+      key: this.$route.params.id,
       post: {
         title: "",
         content: "",
@@ -64,10 +73,34 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["uid"])
+    ...mapGetters([ 'uid' ])
+  },
+  created() {
+    let post_id = this.key
+    let post_array = []
+    fb.auth.onAuthStateChanged(function(user) {
+        if (user) {
+            const ref = fb.db.collection("posts").doc(user.uid).collection("posts").doc(post_id);
+            ref.get().then(doc => {
+                if (doc.exists) {
+                    post_array.push({
+                        id: doc.id,
+                        title: doc.data().title,
+                        content: doc.data().content,
+                        link: doc.data().link,
+                        tags: doc.data().tag,
+                        date: doc.data().date
+                    });
+                } else {
+                alert("Can't find the post");
+                }
+            });
+        }
+    })
+    this.post = post_array
   },
   methods: {
-    addPost() {
+      addPost() {
       if (this.title === "") {
         this.message = "Title is required";
         this.dialog = true;
@@ -97,7 +130,7 @@ export default {
     },
     makeTagChip() {
       this.post.tags.push(this.tag);
-      this.tag = "";
+      this.tag = ""; 
     },
     removeTag(idx) {
       this.post.tags.splice(idx, 1);
